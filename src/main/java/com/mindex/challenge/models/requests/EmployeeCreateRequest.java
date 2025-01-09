@@ -1,24 +1,32 @@
-package com.mindex.challenge.data;
+package com.mindex.challenge.models.requests;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
-public class Employee {
-    private String employeeId;
+/**
+ * POJO Representing a request to create a new Employee.
+ *
+ * @author Robert Heinbokel.
+ */
+public class EmployeeCreateRequest {
+    @NotBlank(message = "First name is required.")
     private String firstName;
+
+    @NotBlank(message = "First name is required.")
     private String lastName;
+
+    @NotBlank(message = "Position is required.")
     private String position;
+
+    @NotBlank(message = "Department is required.")
     private String department;
-    private List<Employee> directReports;
 
-    public Employee() {
-    }
+    @Valid
+    private List<DirectReportReferenceDTO> directReports;
 
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
+    public EmployeeCreateRequest() {
     }
 
     public String getFirstName() {
@@ -53,11 +61,11 @@ public class Employee {
         this.department = department;
     }
 
-    public List<Employee> getDirectReports() {
+    public List<DirectReportReferenceDTO> getDirectReports() {
         return directReports;
     }
 
-    public void setDirectReports(List<Employee> directReports) {
+    public void setDirectReports(List<DirectReportReferenceDTO> directReports) {
         this.directReports = directReports;
     }
 }

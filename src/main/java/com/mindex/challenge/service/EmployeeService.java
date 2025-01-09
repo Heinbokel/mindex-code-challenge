@@ -1,9 +1,10 @@
 package com.mindex.challenge.service;
 
-import com.mindex.challenge.data.Employee;
+import com.mindex.challenge.models.Employee;
+import com.mindex.challenge.models.requests.EmployeeCreateRequest;
 
 public interface EmployeeService {
-    Employee create(Employee employee);
+    Employee create(EmployeeCreateRequest request);
     Employee read(String id);
     Employee update(Employee employee);
 }

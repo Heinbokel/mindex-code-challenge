@@ -1,6 +1,6 @@
 package com.mindex.challenge.service.impl;
 
-import com.mindex.challenge.data.Employee;
+import com.mindex.challenge.models.Employee;
 import com.mindex.challenge.service.EmployeeService;
 import org.junit.Before;
 import org.junit.Test;
