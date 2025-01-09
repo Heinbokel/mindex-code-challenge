@@ -40,7 +40,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee read(String id) {
+    public Employee read(String id, boolean includeDirectReportDetails) {
         LOG.debug("Creating employee with id [{}]", id);
 
         Employee employee = employeeRepository.findByEmployeeId(id);
