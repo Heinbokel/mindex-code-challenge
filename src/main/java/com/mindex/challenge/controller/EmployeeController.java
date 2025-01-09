@@ -74,7 +74,7 @@ public class EmployeeController {
     @Operation(summary = "Get an employee", description = "Retrieves an employee by their unique employeeId.")
     public Employee read(
             @PathVariable
-            @ValidUUID
+            @ValidUUID(message = "Invalid employee ID")
             @Parameter(description = "The unique identifier of the employee to retrieve.", example = "123e4567-e89b-12d3-a456-426614174000", required = true)
             String id,
             @RequestParam(required = false, defaultValue = "false")
@@ -96,10 +96,11 @@ public class EmployeeController {
     @Operation(summary = "Update an employee", description = "Updates an existing employee's details.")
     public Employee update(
             @PathVariable
-            @ValidUUID
+            @ValidUUID(message = "Invalid employee ID")
             @Parameter(description = "The unique identifier of the employee to retrieve.", example = "123e4567-e89b-12d3-a456-426614174000", required = true)
             String id,
             @RequestBody
+            @Valid
             @Parameter(description = "The employee details to be updated.")
             EmployeeSaveRequest request) {
         LOG.debug("Received employee update request for id [{}] and employee [{}]", id, request);

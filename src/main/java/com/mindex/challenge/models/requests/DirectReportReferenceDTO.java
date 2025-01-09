@@ -9,7 +9,7 @@ import com.mindex.challenge.validators.ValidUUID;
  */
 public class DirectReportReferenceDTO {
 
-    @ValidUUID
+    @ValidUUID(message = "Invalid direct report employee ID")
     private String employeeId;
 
     public DirectReportReferenceDTO() {
