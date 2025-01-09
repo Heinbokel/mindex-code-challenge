@@ -4,7 +4,7 @@ import com.mindex.challenge.dao.EmployeeRepository;
 import com.mindex.challenge.exceptions.ResourceNotFoundException;
 import com.mindex.challenge.models.Employee;
 import com.mindex.challenge.models.requests.DirectReportReferenceDTO;
-import com.mindex.challenge.models.requests.EmployeeCreateRequest;
+import com.mindex.challenge.models.requests.EmployeeSaveRequest;
 import com.mindex.challenge.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
 
     @Override
-    public Employee create(EmployeeCreateRequest request) {
+    public Employee create(EmployeeSaveRequest request) {
         LOG.debug("Creating employee [{}]", request);
         final Employee employee = new Employee();
         employee.setFirstName(request.getFirstName());
@@ -42,7 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee read(String id, boolean includeDirectReportDetails) {
-        LOG.debug("Creating employee with id [{}]", id);
+        LOG.debug("Retrieving employee with id [{}]", id);
 
         final Employee employee = employeeRepository.findByEmployeeId(id);
 
@@ -54,8 +54,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee update(Employee employee) {
-        LOG.debug("Updating employee [{}]", employee);
+    public Employee update(EmployeeSaveRequest request, String id) {
+        LOG.debug("Updating employee with id [{}] and employee [{}]", id, request);
+
+        final Employee employee = this.read(id, false);
+        employee.setFirstName(request.getFirstName());
+        employee.setLastName(request.getLastName());
+        employee.setPosition(request.getPosition());
+        employee.setDepartment(request.getDepartment());
+        employee.setDirectReports(mapDirectReports(request.getDirectReports()));
 
         return employeeRepository.save(employee);
     }

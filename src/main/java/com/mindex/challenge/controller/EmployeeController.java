@@ -1,7 +1,7 @@
 package com.mindex.challenge.controller;
 
 import com.mindex.challenge.models.Employee;
-import com.mindex.challenge.models.requests.EmployeeCreateRequest;
+import com.mindex.challenge.models.requests.EmployeeSaveRequest;
 import com.mindex.challenge.service.EmployeeService;
 import com.mindex.challenge.validators.ValidUUID;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,7 +58,7 @@ public class EmployeeController {
             @RequestBody
             @Valid
             @Parameter(description = "The employee details to be created.")
-            EmployeeCreateRequest request) {
+            EmployeeSaveRequest request) {
         LOG.debug("Received employee create request for [{}]", request);
 
         return employeeService.create(request);
@@ -89,7 +89,7 @@ public class EmployeeController {
      * Updates the details of an existing employee.
      *
      * @param id the unique identifier of the employee to update.
-     * @param employee the updated employee details.
+     * @param request the updated employee details.
      * @return the updated {@link Employee} object.
      */
     @PutMapping("/{id}")
@@ -101,10 +101,9 @@ public class EmployeeController {
             String id,
             @RequestBody
             @Parameter(description = "The employee details to be updated.")
-            Employee employee) {
-        LOG.debug("Received employee create request for id [{}] and employee [{}]", id, employee);
+            EmployeeSaveRequest request) {
+        LOG.debug("Received employee update request for id [{}] and employee [{}]", id, request);
 
-        employee.setEmployeeId(id);
-        return employeeService.update(employee);
+        return employeeService.update(request, id);
     }
 }
