@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Robert Heinbokel
  */
+@Validated
 @RequestMapping("/employee")
 @RestController
 public class EmployeeController {
@@ -48,7 +50,10 @@ public class EmployeeController {
      * @return the created Employee, including the assigned unique employeeId.
      */
     @PostMapping()
-    @Operation(summary = "Create an employee", description = "Creates a new employee and assigns them a unique employeeId.")
+    @Operation(
+            summary = "Create an employee",
+            description = "Creates a new employee and assigns them a unique employeeId."
+    )
     public Employee create(
             @RequestBody
             @Valid

@@ -11,16 +11,16 @@ import java.util.List;
  * @author Robert Heinbokel.
  */
 public class EmployeeCreateRequest {
-    @NotBlank(message = "First name is required.")
+    @NotBlank(message = "First name is required")
     private String firstName;
 
-    @NotBlank(message = "First name is required.")
+    @NotBlank(message = "Last name is required")
     private String lastName;
 
-    @NotBlank(message = "Position is required.")
+    @NotBlank(message = "Position is required")
     private String position;
 
-    @NotBlank(message = "Department is required.")
+    @NotBlank(message = "Department is required")
     private String department;
 
     @Valid

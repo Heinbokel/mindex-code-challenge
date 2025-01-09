@@ -1,6 +1,7 @@
 package com.mindex.challenge.service.impl;
 
 import com.mindex.challenge.dao.EmployeeRepository;
+import com.mindex.challenge.exceptions.ResourceNotFoundException;
 import com.mindex.challenge.models.Employee;
 import com.mindex.challenge.models.requests.DirectReportReferenceDTO;
 import com.mindex.challenge.models.requests.EmployeeCreateRequest;
@@ -43,10 +44,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee read(String id, boolean includeDirectReportDetails) {
         LOG.debug("Creating employee with id [{}]", id);
 
-        Employee employee = employeeRepository.findByEmployeeId(id);
+        final Employee employee = employeeRepository.findByEmployeeId(id);
 
         if (employee == null) {
-            throw new RuntimeException("Invalid employeeId: " + id);
+            throw new ResourceNotFoundException("Invalid employeeId: " + id);
         }
 
         return employee;
