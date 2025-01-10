@@ -1,7 +1,7 @@
 package com.mindex.challenge.exceptions;
 
 /**
- * Exception thrown to indicate that a circular reference (generally in the database) caused an error.
+ * Exception thrown to indicate that a circular reference caused an error.
  *
  * @author Robert Heinbokel.
  */

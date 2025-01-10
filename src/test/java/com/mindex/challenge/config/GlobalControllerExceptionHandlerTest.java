@@ -34,7 +34,7 @@ public class GlobalControllerExceptionHandlerTest {
     public void setUp() {
         exceptionHandler = new GlobalControllerExceptionHandler();
         request = mock(HttpServletRequest.class);
-        Mockito.when(request.getRequestURI()).thenReturn("/test-uri");
+        Mockito.when(request.getRequestURI()).thenReturn("/test-uri"); // Can't just stub the value so need to mock the response from this method
     }
 
     @Test
@@ -64,13 +64,13 @@ public class GlobalControllerExceptionHandlerTest {
 
     @Test
     public void testHandleResourceNotFoundException() {
-        ResourceNotFoundException exception = new ResourceNotFoundException("Resource not found");
+        ResourceNotFoundException exception = new ResourceNotFoundException("Employee not found");
 
         ResponseEntity<ErrorDetails> response = exceptionHandler.handleResourceNotFoundException(exception, request);
 
         assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode().value());
         assertEquals("Resource not found", response.getBody().getMessage());
-        assertEquals("Resource not found", response.getBody().getMessage());
+        assertEquals("Employee not found", response.getBody().getError());
     }
 
     @Test
@@ -92,6 +92,7 @@ public class GlobalControllerExceptionHandlerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCode().value());
         assertEquals("An unexpected error occurred", response.getBody().getMessage());
+        assertEquals("An unexpected error occurred while processing the request", response.getBody().getError());
     }
 
     @Test

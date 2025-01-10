@@ -12,6 +12,13 @@ public class ErrorDetails {
     private int status;
     private String error, message, path, timestamp;
 
+    /**
+     * Full args constructor
+     * @param status the HTTP Status as an int.
+     * @param message The friendly message of the error.
+     * @param error The error's message.
+     * @param path The URI where the error occurred.
+     */
     public ErrorDetails(int status, String message, String error, String path) {
         this.status = status;
         this.message = message;
@@ -20,6 +27,7 @@ public class ErrorDetails {
         this.timestamp = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
+    // Getters and Setters
 
     public int getStatus() {
         return status;

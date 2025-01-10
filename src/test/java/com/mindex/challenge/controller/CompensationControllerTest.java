@@ -55,7 +55,7 @@ public class CompensationControllerTest {
         Mockito.when(compensationService.readAll(anyString())).thenReturn(Collections.singletonList(compensation));
 
         // when/then
-        mockMvc.perform(get("/compensation/{employeeId}", EMPLOYEE_ID))
+        mockMvc.perform(get("/employee/{employeeId}/compensation", EMPLOYEE_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(1))
@@ -71,7 +71,7 @@ public class CompensationControllerTest {
         Mockito.when(compensationService.readByEffectiveDate(anyString(), any(LocalDate.class))).thenReturn(compensation);
 
         // when/then
-        mockMvc.perform(get("/compensation/{employeeId}/effective-date/{effectiveDate}", EMPLOYEE_ID, EFFECTIVE_DATE_STRING))
+        mockMvc.perform(get("/employee/{employeeId}/compensation/{effectiveDate}", EMPLOYEE_ID, EFFECTIVE_DATE_STRING))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // Ensure JSON response
                 .andExpect(jsonPath("$.employeeId").value(EMPLOYEE_ID))
@@ -90,7 +90,7 @@ public class CompensationControllerTest {
         Mockito.when(compensationService.create(any(CompensationCreateRequest.class), anyString())).thenReturn(expectedCompensation);
 
         // when/then
-        mockMvc.perform(post("/compensation/{employeeId}", EMPLOYEE_ID)
+        mockMvc.perform(post("/employee/{employeeId}/compensation", EMPLOYEE_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -102,7 +102,7 @@ public class CompensationControllerTest {
 
     @Test
     public void testReadAll_InvalidEmployeeId_ReturnsBadRequestAndErrorMessage() throws Exception {
-        mockMvc.perform(get("/compensation/{employeeId}", "invalid-uuid"))
+        mockMvc.perform(get("/employee/{employeeId}/compensation", "invalid-uuid"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.error").value("readAll.employeeId: Employee ID must be a valid UUID"))
@@ -117,7 +117,7 @@ public class CompensationControllerTest {
         request.setSalary(null); // Invalid salary
 
         // when/then
-        mockMvc.perform(post("/compensation/{employeeId}", EMPLOYEE_ID)
+        mockMvc.perform(post("/employee/{employeeId}/compensation", EMPLOYEE_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())

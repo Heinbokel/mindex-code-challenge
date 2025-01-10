@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  */
 public class CompensationCreateRequest {
 
-    @ValidLocalDate(message = "Effective date must be a valid local date")
+    @ValidLocalDate(message = "Effective date must be a valid local date in yyyy-MM-dd format")
     private String effectiveDate;
 
     @NotNull(message = "Salary must not be null.")

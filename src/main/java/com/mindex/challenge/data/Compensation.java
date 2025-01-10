@@ -11,8 +11,8 @@ import java.time.LocalDate;
  * @author Robert Heinbokel
  */
 public class Compensation {
-    @Id
-    private String compensationId; // MongoDB's auto-generated unique identifier
+    @Id // MongoDB's auto-generated unique identifier
+    private String compensationId;
 
     private String employeeId;
 

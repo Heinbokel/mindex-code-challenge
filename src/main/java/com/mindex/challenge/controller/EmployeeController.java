@@ -3,6 +3,7 @@ package com.mindex.challenge.controller;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.data.ReportingStructure;
 import com.mindex.challenge.service.EmployeeService;
+import com.mindex.challenge.validators.ValidUUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,8 +66,11 @@ public class EmployeeController {
      */
     @GetMapping("/employee/{id}/reporting-structure")
     public ReportingStructure getReportingStructure(
-            @PathVariable String id,
-            @RequestParam(required = false, defaultValue = "false") boolean includeDirectReportDetails) {
+            @PathVariable
+            @ValidUUID(message = "Employee ID must be a valid UUID")
+            String id,
+            @RequestParam(required = false, defaultValue = "false")
+            boolean includeDirectReportDetails) {
         LOG.debug("Received request to get reporting structure for employee with ID: [{}], direct report details included: [{}]", id, includeDirectReportDetails);
 
         return employeeService.getReportingStructure(id, includeDirectReportDetails);

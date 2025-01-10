@@ -3,6 +3,7 @@ package com.mindex.challenge.controller;
 import com.mindex.challenge.data.Compensation;
 import com.mindex.challenge.data.requests.CompensationCreateRequest;
 import com.mindex.challenge.service.ICompensationService;
+import com.mindex.challenge.validators.ValidLocalDate;
 import com.mindex.challenge.validators.ValidUUID;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ import java.util.List;
  * @author Robert Heinbokel
  */
 @RestController
-@RequestMapping("/compensation")
+@RequestMapping("/employee")
 @Validated
 public class CompensationController {
     private static final Logger LOG = LoggerFactory.getLogger(CompensationController.class);
@@ -44,9 +45,12 @@ public class CompensationController {
      * @param employeeId the ID of the employee to retrieve compensations for.
      * @return the {@link List<Compensation>} to return.
      */
-    @GetMapping("/{employeeId}")
-    public List<Compensation> readAll(@PathVariable @ValidUUID(message = "Employee ID must be a valid UUID") String employeeId) {
-        LOG.debug("Received request to read all compensations for employeeId {}", employeeId);
+    @GetMapping("/{employeeId}/compensation")
+    public List<Compensation> readAll(
+            @PathVariable
+            @ValidUUID(message = "Employee ID must be a valid UUID")
+            String employeeId) {
+        LOG.debug("Received request to read all compensations for employeeId [{}]", employeeId);
         return compensationService.readAll(employeeId);
     }
 
@@ -56,9 +60,17 @@ public class CompensationController {
      * @param effectiveDate the effective date of the compensation.
      * @return the {@link Compensation} to return.
      */
-    @GetMapping("/{employeeId}/effective-date/{effectiveDate}")
-    public Compensation readByEffectiveDate(@PathVariable @ValidUUID(message = "Employee ID must be a valid UUID") String employeeId, @PathVariable String effectiveDate) {
-        LOG.debug("Received request to read compensation for employeeId {} and effectiveDate {}", employeeId, effectiveDate);
+    @GetMapping("/{employeeId}/compensation/{effectiveDate}")
+    public Compensation readByEffectiveDate(
+            @PathVariable
+            @ValidUUID(message = "Employee ID must be a valid UUID")
+            String employeeId,
+            @PathVariable
+            @ValidLocalDate(message = "Effective date must be in yyyy-MM-dd format")
+            String effectiveDate) {
+        // Note to reviewers - while it's technically not a child of the effective date, the compensation is dependent on it here.
+        // Which is why the endpoint is structured this way. One could just as easily replace it with a compensation ID instead.
+        LOG.debug("Received request to read compensation for employeeId [{}] and effectiveDate [{}]", employeeId, effectiveDate);
         return compensationService.readByEffectiveDate(employeeId, LocalDate.parse(effectiveDate));
     }
 
@@ -68,9 +80,15 @@ public class CompensationController {
      * @param employeeId the ID of the employee this compensation belongs to.
      * @return the created {@link Compensation}.
      */
-    @PostMapping("/{employeeId}")
-    public Compensation create(@RequestBody @Valid CompensationCreateRequest request, @PathVariable @ValidUUID(message = "Employee ID must be a valid UUID") String employeeId) {
-        LOG.debug("Received request to create compensation [{}] for employeeId {}", request, employeeId);
+    @PostMapping("/{employeeId}/compensation")
+    public Compensation create(
+            @RequestBody
+            @Valid
+            CompensationCreateRequest request,
+            @PathVariable
+            @ValidUUID(message = "Employee ID must be a valid UUID")
+            String employeeId) {
+        LOG.debug("Received request to create compensation [{}] for employeeId [{}]", request, employeeId);
         return compensationService.create(request, employeeId);
     }
 }

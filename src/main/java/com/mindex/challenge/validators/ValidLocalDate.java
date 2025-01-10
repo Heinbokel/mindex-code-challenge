@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * @author Robert Heinbokel
  */
 @Constraint(validatedBy = LocalDateValidator.class)
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.PARAMETER, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidLocalDate {
     String message() default "Date must be in the format yyyy-MM-dd and a valid date.";

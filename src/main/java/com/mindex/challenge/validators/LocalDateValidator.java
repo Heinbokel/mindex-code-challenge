@@ -28,7 +28,6 @@ public class LocalDateValidator implements ConstraintValidator<ValidLocalDate, S
         }
 
         try {
-            // Parse the date to ensure it is valid
             LocalDate.parse(value, DATE_FORMATTER);
             return true;
         } catch (DateTimeParseException e) {
