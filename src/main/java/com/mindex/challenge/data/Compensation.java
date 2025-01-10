@@ -20,6 +20,19 @@ public class Compensation {
 
     private BigDecimal salary;
 
+    /**
+     * Constructs a new Compensation instance with the specified employee ID, salary, and effective date.
+     *
+     * @param employeeId the employeeId of this employee.
+     * @param salary the salary of this compensation.
+     * @param effectiveDate the effective date of this compensation.
+     */
+    public Compensation(String employeeId, BigDecimal salary, LocalDate effectiveDate) {
+        this.employeeId = employeeId;
+        this.salary = salary;
+        this.effectiveDate = effectiveDate;
+    }
+
     // Getters and Setters
 
     public String getCompensationId() {

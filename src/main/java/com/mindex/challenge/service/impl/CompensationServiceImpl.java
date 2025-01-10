@@ -47,10 +47,7 @@ public class CompensationServiceImpl implements ICompensationService {
             throw new DuplicateEntityException(String.format("Duplicate compensation found for employeeId: %s and effectiveDate: %s", employeeId, effectiveDate));
         }
 
-        final Compensation compensation = new Compensation();
-        compensation.setEmployeeId(employeeId);
-        compensation.setEffectiveDate(effectiveDate);
-        compensation.setSalary(request.getSalary());
+        final Compensation compensation = new Compensation(employeeId, request.getSalary(), effectiveDate);
 
         try {
             return compensationRepository.insert(compensation);
