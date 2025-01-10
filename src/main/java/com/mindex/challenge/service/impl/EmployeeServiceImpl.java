@@ -3,10 +3,11 @@ package com.mindex.challenge.service.impl;
 import com.mindex.challenge.dao.EmployeeRepository;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.data.ReportingStructure;
+import com.mindex.challenge.exceptions.CircularReferenceException;
+import com.mindex.challenge.exceptions.ResourceNotFoundException;
 import com.mindex.challenge.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -20,14 +21,25 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
+
+    /**
+     * Constructor for dependency injection.
+     * @param employeeRepository the {@link EmployeeRepository} to use.
+     */
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
     @Override
     public Employee create(Employee employee) {
         LOG.debug("Creating employee [{}]", employee);
 
         employee.setEmployeeId(UUID.randomUUID().toString());
+        // Note to reviewers - try/catches could be done on all database accesses to allow for
+        // better/more specific error handling using custom exceptions/messages.
+        // This is implemented in the Compensation service.
+
         employeeRepository.insert(employee);
 
         return employee;
@@ -35,12 +47,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee read(String id) {
-        LOG.debug("Creating employee with id [{}]", id);
+        LOG.debug("Reading employee with id [{}]", id);
 
         Employee employee = employeeRepository.findByEmployeeId(id);
 
         if (employee == null) {
-            throw new RuntimeException("Invalid employeeId: " + id);
+            throw new ResourceNotFoundException(String.format("Employee not found for employeeId: %s", id));
         }
 
         return employee;
@@ -55,7 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public ReportingStructure getReportingStructure(String employeeId, boolean includeDirectReportDetails) {
-        LOG.debug("Building reporting structure for employeeId {}", employeeId);
+        LOG.debug("Building reporting structure for employeeId [{}]", employeeId);
 
         // Step 1: Retrieve the root employee from the provided ID.
         final Employee rootEmployee = this.read(employeeId);
@@ -85,13 +97,10 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param inProgress the {@link Set<String>} holding in progress employees, allowing the ability to break out of infinite recursion.
      */
     private void buildEntireEmployeeReportingHierarchy(Employee employee, Map<String, Employee> memoizedEmployees, Set<String> inProgress) {
-        LOG.debug("Building entire hierarchy for employeeId {}", employee.getEmployeeId());
+        LOG.debug("Building entire hierarchy for employeeId [{}]", employee.getEmployeeId());
 
         // Detect circular references.
-        if (inProgress.contains(employee.getEmployeeId())) {
-            LOG.error("Circular reference detected while building hierarchy for employeeId {}", employee.getEmployeeId());
-            throw new IllegalStateException("Circular reference detected for employeeId: " + employee.getEmployeeId());
-        }
+        checkForCircularReferences(inProgress, employee.getEmployeeId());
 
         // Add the employee to the in progress set.
         inProgress.add(employee.getEmployeeId());
@@ -129,7 +138,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return the count of the direct/indirect reports.
      */
     private int countReports(Employee employee, Map<String, Employee> memoizedEmployees, Set<String> inProgress) {
-        LOG.debug("Counting reports for employeeId {}", employee.getEmployeeId());
+        LOG.debug("Counting reports for employeeId [{}]", employee.getEmployeeId());
 
         // If there are no direct reports just return 0.
         if (employee.getDirectReports() == null || employee.getDirectReports().isEmpty()) {
@@ -144,10 +153,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             final String reportId = reportStub.getEmployeeId();
 
             // Detect circular references to prevent infinite recursion.
-            if (inProgress.contains(reportId)) {
-                LOG.error("Circular reference detected for employeeId {}", reportId);
-                throw new IllegalStateException("Circular reference detected for employeeId: " + reportId);
-            }
+            checkForCircularReferences(inProgress, reportId);
 
             // Add the current report to the in progress set to track recursion.
             inProgress.add(reportId);
@@ -163,5 +169,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         return count;
+    }
+
+    /**
+     * Checks for circular references in a set of in progress employee IDs from direct reports.
+     * If a circular reference is detected for the provided employeeId, an error is logged, and an exception is thrown.
+     *
+     * @param inProgress a {@link Set<String>} of report IDs currently being processed.
+     * @param reportId the report ID to check for circular references.
+     */
+    private static void checkForCircularReferences(Set<String> inProgress, String reportId) {
+        if (inProgress.contains(reportId)) {
+            throw new CircularReferenceException("Circular reference detected for employeeId: " + reportId);
+        }
     }
 }

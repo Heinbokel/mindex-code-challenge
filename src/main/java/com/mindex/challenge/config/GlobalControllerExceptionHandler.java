@@ -1,5 +1,6 @@
 package com.mindex.challenge.config;
 
+import com.mindex.challenge.exceptions.CircularReferenceException;
 import com.mindex.challenge.exceptions.DuplicateEntityException;
 import com.mindex.challenge.exceptions.ErrorDetails;
 import com.mindex.challenge.exceptions.ResourceNotFoundException;
@@ -92,6 +93,19 @@ public class GlobalControllerExceptionHandler {
                 request.getRequestURI()
         );
         LOG.error("UnexpectedDatabaseException was thrown: {}", errorDetails.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
+
+    @ExceptionHandler(CircularReferenceException.class)
+    public ResponseEntity<ErrorDetails> handleCircularReferenceException(CircularReferenceException ex, HttpServletRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "An unexpected error occurred",
+                "An unexpected error occurred while processing the request", // Intentionally vague message
+                request.getRequestURI()
+        );
+        // Log the error for ourselves to see, but don't let the caller know the specific cause.
+        LOG.error("CircularReferenceException was thrown: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
 
