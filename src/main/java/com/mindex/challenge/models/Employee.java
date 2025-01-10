@@ -11,7 +11,14 @@ public class Employee {
     private String lastName;
     private String position;
     private String department;
+
+    /* Review Note - The readme says this should come back as either a list of strings or a list of objects.
+     * For the sake of predictability and consistency to all consumers, that is not a good design.
+     * Instead, they can be Employees with just the employeeIds, or they can be Employees with all details.
+     * We can choose to hide null values or not in the response using @JsonInclude NOT_NULL on this class or a custom object mapper.
+     */
     private List<Employee> directReports;
+
 
     public Employee() {
     }

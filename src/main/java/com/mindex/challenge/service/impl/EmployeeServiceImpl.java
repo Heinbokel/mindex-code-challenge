@@ -56,6 +56,23 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new ResourceNotFoundException("Invalid employeeId: " + id);
         }
 
+        // If details of direct reports are needed
+        if (includeDirectReportDetails && employee.getDirectReports() != null) {
+            // Extract the IDs of the direct reports
+            List<String> directReportIds = employee.getDirectReports().stream()
+                    .map(Employee::getEmployeeId)
+                    .collect(Collectors.toList());
+
+            // Fetch all direct reports in a single query
+            List<Employee> detailedReports = employeeRepository.findByEmployeeIdIn(directReportIds);
+
+            // Hide the `directReports` of each fetched report
+            detailedReports.forEach(report -> report.setDirectReports(null));
+
+            // Set the detailed reports back to the employee
+            employee.setDirectReports(detailedReports);
+        }
+
         return employee;
     }
 
