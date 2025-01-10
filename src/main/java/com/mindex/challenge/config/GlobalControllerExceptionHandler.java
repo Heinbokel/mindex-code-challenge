@@ -87,13 +87,13 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(UnexpectedDatabaseException.class)
     public ResponseEntity<ErrorDetails> handleUnexpectedDatabaseException(UnexpectedDatabaseException ex, HttpServletRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(
-                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Unexpected database error",
                 ex.getMessage(),
                 request.getRequestURI()
         );
         LOG.error("UnexpectedDatabaseException was thrown: {}", errorDetails.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
     }
 
     @ExceptionHandler(CircularReferenceException.class)
@@ -106,7 +106,7 @@ public class GlobalControllerExceptionHandler {
         );
         // Log the error for ourselves to see, but don't let the caller know the specific cause.
         LOG.error("CircularReferenceException was thrown: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
     }
 
     @ExceptionHandler(Exception.class)
