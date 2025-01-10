@@ -1,6 +1,7 @@
 package com.mindex.challenge.controller;
 
 import com.mindex.challenge.data.Employee;
+import com.mindex.challenge.data.ReportingStructure;
 import com.mindex.challenge.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,5 +41,20 @@ public class EmployeeController {
 
         employee.setEmployeeId(id);
         return employeeService.update(employee);
+    }
+
+    /**
+     * Generates the reporting structure for a given employee, optionally generating the entire employee hierarchy as well.
+     * @param id the employeeId of the employee.
+     * @param includeDirectReportDetails indicates whether to generate the entire hierarchy for the employee and all reports.
+     * @return The {@link ReportingStructure} of the employee.
+     */
+    @GetMapping("/employee/{id}/reporting-structure")
+    public ReportingStructure getReportingStructure(
+            @PathVariable String id,
+            @RequestParam(required = false, defaultValue = "false") boolean includeDirectReportDetails) {
+        LOG.debug("Received request to get reporting structure for employee with ID: {}, direct report details included: {}", id, includeDirectReportDetails);
+
+        return employeeService.getReportingStructure(id, includeDirectReportDetails);
     }
 }
